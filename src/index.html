@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <style>
+    .cell {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      border: 1px solid #fff;
+
+      font-size: 60px;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 100px;
+      color: #fff;
+      background-color: green;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <button id="restart">restart</button>
+  <div id="TicTacToe"></div>
+  <script src="./js/Board.js"></script>
+  <script src="./js/Game.js"></script>
+  <script>
+    const game = new Game(new Board(), '#TicTacToe')
+    document.getElementById('restart').addEventListener('click', () => game.restart())
+    game.start()
+  </script>
+</body>
+</html>
