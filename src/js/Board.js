@@ -96,4 +96,8 @@ class Board {
   clear() {
     this.cells = new Array(this.dimension * this.dimension).fill(EMPTY)
   }
+
+  isEmpty() {
+    return this.getEmptyCells().length === this.cells.length
+  }
 }

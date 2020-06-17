@@ -101,6 +101,9 @@ class MinimaxStrategy {
   }
 
   calculatePosition(board, piece) {
+    if (board.isEmpty()) {
+      return Math.floor(board.cells.length / 2)
+    }
     const { position } = this._getBestMove(board, piece)
     if (position === -1) {
       throw Error('returned illegal move position (-1)')
