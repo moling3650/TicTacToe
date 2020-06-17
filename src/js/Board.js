@@ -38,25 +38,25 @@ class Board {
   }
 
   getEmptyCells() {
-    return this.cells.map((cell, idx) => cell ? null : idx).filter(idx => idx !== null)
+    return this.cells.map((cell, idx) => cell === EMPTY ? -1 : idx).filter(idx => ~idx)
   }
 
-  move(position, player) {
-    if (this.cells[position] === EMPTY) {
-      this.cells[position] = player
+  move(position, piece) {
+    if (this.cellFor(position) === EMPTY) {
+      this.cells[position] = piece
     }
   }
 
   _checkWinByAxis(start, step) {
-    const player = this.cellFor(start)
-    if (player === EMPTY) {
+    const piece = this.cellFor(start)
+    if (piece === EMPTY) {
       return null
     }
     let pos = start + step * (this.dimension - 1)
-    while (start < pos && this.cellFor(pos) === player) {
+    while (start < pos && this.cellFor(pos) === piece) {
       pos -= step
     }
-    return (start === pos) ? player : null
+    return (start === pos) ? piece : null
   }
 
   checkWin() {
