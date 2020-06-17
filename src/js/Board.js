@@ -90,11 +90,10 @@ class Board {
   }
 
   clone() {
-    return new Board(null, this.board)
+    return new Board(null, this.cells)
   }
 
   clear() {
-    this.cells = new Array(this.dimension * this.dimension)
-    this.cells.fill(EMPTY)
+    this.cells = new Array(this.dimension * this.dimension).fill(EMPTY)
   }
 }
