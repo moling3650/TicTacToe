@@ -38,7 +38,7 @@ class Board {
   }
 
   getEmptyCells() {
-    return this.cells.map((cell, idx) => cell === EMPTY ? -1 : idx).filter(idx => ~idx)
+    return this.cells.map((cell, idx) => cell === EMPTY ? idx : -1).filter(idx => ~idx)
   }
 
   move(position, piece) {
