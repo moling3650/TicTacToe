@@ -43,7 +43,8 @@ class Game {
       const winner = this.board.checkWin()
       if (winner !== null) {
         this.isRunning = false
-        alert(`Winner is ${CELL_DISPLAY[winner]}, please restart the game.`)
+        const winMsg = winner === DRAW ? 'Draw' : `Winner is ${CELL_DISPLAY[winner]}`
+        alert(`${winMsg}, please restart the game.`)
       }
     }
   }
