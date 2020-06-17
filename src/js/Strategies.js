@@ -66,3 +66,45 @@ class MonteCarloStrategy {
     return this._getBestMove(scoreBoard, board)
   }
 }
+
+class MinimaxStrategy {
+  constructor() {
+    this.SCORES = {
+      [PIECE_O]: -1,
+      [PIECE_X]: 1,
+      [DRAW]: 0
+    }
+  }
+
+  _getBestMove(board, piece) {
+    const winner = board.checkWin()
+    if (winner !== null) {
+      return { score: this.SCORES[winner], position: -1 }
+    }
+
+    const otherPiece = board.switchPiece(piece)
+    let best = { score: this.SCORES[otherPiece], position: -1 }
+    for (const position of board.getEmptyCells()) {
+      const child = board.clone()
+      child.move(position, piece)
+      const { score } = this._getBestMove(child, otherPiece)
+      if (score === this.SCORES[piece]) {
+        return { score, position }
+      }
+      if (piece === PIECE_O && score < best.score) {
+        best = { score, position }
+      } else if (piece === PIECE_X && score > best.score) {
+        best = { score, position }
+      }
+    }
+    return best
+  }
+
+  calculatePosition(board, piece) {
+    const { position } = this._getBestMove(board, piece)
+    if (position === -1) {
+      throw Error('returned illegal move position (-1)')
+    }
+    return position
+  }
+}

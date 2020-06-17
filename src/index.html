@@ -28,6 +28,7 @@
     <h3>落子策略</h3>
     <button id="Random">Random</button>
     <button id="MonteCarlo">MonteCarlo</button>
+    <button id="Minimax">Minimax</button>
   </div>
 
   <script src="./js/Board.js"></script>
@@ -40,6 +41,8 @@
     document.getElementById('Random').addEventListener('click', () => game.moveByStratepy(random))
     const monteCarlo = new MonteCarloStrategy(300)
     document.getElementById('MonteCarlo').addEventListener('click', () => game.moveByStratepy(monteCarlo))
+    const minimax = new MinimaxStrategy()
+    document.getElementById('Minimax').addEventListener('click', () => game.moveByStratepy(minimax))
     game.start()
   </script>
 </body>
