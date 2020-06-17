@@ -27,6 +27,7 @@
   <div id="strategies">
     <h3>落子策略</h3>
     <button id="Random">Random</button>
+    <button id="MonteCarlo">MonteCarlo</button>
   </div>
 
   <script src="./js/Board.js"></script>
@@ -37,6 +38,8 @@
     document.getElementById('restart').addEventListener('click', () => game.restart())
     const random = new RandomStrategy()
     document.getElementById('Random').addEventListener('click', () => game.moveByStratepy(random))
+    const monteCarlo = new MonteCarloStrategy(300)
+    document.getElementById('MonteCarlo').addEventListener('click', () => game.moveByStratepy(monteCarlo))
     game.start()
   </script>
 </body>
