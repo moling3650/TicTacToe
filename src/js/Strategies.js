@@ -86,9 +86,9 @@ class MinimaxStrategy {
 
   _isBetter(piece, score, bestScore) {
     if (piece === PIECE_O) {
-      return score < bestScore
+      return score <= bestScore
     } else if (piece === PIECE_X) {
-      return score > bestScore
+      return score >= bestScore
     } else {
       throw TypeError('Invalid piece type')
     }
