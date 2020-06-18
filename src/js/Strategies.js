@@ -69,31 +69,46 @@ class MonteCarloStrategy {
 
 class MinimaxStrategy {
   constructor() {
-    this.SCORES = {
+    this.WIN_SCORES = {
       [PIECE_O]: -1,
       [PIECE_X]: 1,
       [DRAW]: 0
     }
   }
 
+  _winScoreFor(winner) {
+    return this.WIN_SCORES[winner]
+  }
+
+  _isWin(piece, score) {
+    return this._winScoreFor(piece) === score
+  }
+
+  _isBetter(piece, score, bestScore) {
+    if (piece === PIECE_O) {
+      return score < bestScore
+    } else if (piece === PIECE_X) {
+      return score > bestScore
+    } else {
+      throw TypeError('Invalid piece type')
+    }
+  }
+
   _getBestMove(board, piece) {
     const winner = board.checkWin()
     if (winner !== null) {
-      return { score: this.SCORES[winner], position: -1 }
+      return { score: this._winScoreFor(winner), position: -1 }
     }
 
     const otherPiece = board.switchPiece(piece)
-    let best = { score: this.SCORES[otherPiece], position: -1 }
+    let best = { score: this._winScoreFor(otherPiece), position: -1 }
     for (const position of board.getEmptyCells()) {
       const child = board.clone()
       child.move(position, piece)
       const { score } = this._getBestMove(child, otherPiece)
-      if (score === this.SCORES[piece]) {
+      if (this._isWin(piece, score)) {
         return { score, position }
-      }
-      if (piece === PIECE_O && score < best.score) {
-        best = { score, position }
-      } else if (piece === PIECE_X && score > best.score) {
+      } else if (this._isBetter(piece, score, best.score)) {
         best = { score, position }
       }
     }
