@@ -29,7 +29,7 @@ class Game {
     Array.from(fragment.childNodes).filter(n => n.tagName === 'DIV')
     .forEach((el, pos) => {
       const cell = this.board.cellFor(pos)
-      el.innerText = (cell === EMPTY) ? '' : CELL_DISPLAY[cell]
+      el.innerText = (cell === EMPTY) ? '' : this.board.displayFor(cell)
     })
 
     this.containerEl.appendChild(fragment)
@@ -43,7 +43,7 @@ class Game {
       const winner = this.board.checkWin()
       if (winner !== null) {
         this.isRunning = false
-        const winMsg = winner === DRAW ? 'Draw' : `Winner is ${CELL_DISPLAY[winner]}`
+        const winMsg = winner === DRAW ? 'Draw' : `Winner is ${this.board.displayFor(winner)}`
         alert(`${winMsg}, please restart the game.`)
       }
     }

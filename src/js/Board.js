@@ -2,11 +2,6 @@ const PIECE_X = 1
 const PIECE_O = -1
 const EMPTY = 0
 const DRAW = 0
-const CELL_DISPLAY = {
-  [EMPTY]: '□',
-  [PIECE_X]: 'X',
-  [PIECE_O]: 'O',
-}
 
 class Board {
   constructor(dimension = 3, cells = null) {
@@ -17,6 +12,18 @@ class Board {
       this.dimension = dimension
       this.clear()
     }
+  }
+
+  displayFor(cell) {
+    return {
+      [EMPTY]: '⬜',
+      [PIECE_X]: '❌',
+      [PIECE_O]: '⭕',
+    }[cell]
+  }
+
+  display() {
+    return this.cells.map(c => this.displayFor(c)).join('').replace(new RegExp(`(.{${this.getDimension()}})`,'g'), '$1\n')
   }
 
   switchPiece(piece) {
