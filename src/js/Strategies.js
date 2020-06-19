@@ -45,10 +45,6 @@ class MonteCarloStrategy {
 
   _getBestMove(scores, board) {
     const emptyCells = board.getEmptyCells()
-    if (!emptyCells.length) {
-      throw Error('there is no possible next move')
-    }
-
     const maxScore = Math.max(...emptyCells.map(pos => scores[pos]))
     const maxScoreCells = emptyCells.filter(pos => scores[pos] === maxScore)
     return this._randomChoose(maxScoreCells)
