@@ -30,6 +30,11 @@
   - checkWin ()：获取棋局的胜者，棋局结束返回`O、X、DRAW`其中之一，否则返回`null`
   - clone ()：返回一个克隆的棋盘
   - clear ()：清空棋盘
+  - displayFor (cell)：显示一个格子的内容
+  - display ()：显示整个棋盘
+  - isEmptyCell (cell)：判断某个格子是否为空
+  - isEmpty ()：判断棋盘是否空的
+  - isFull ()：判断棋盘是否满子
 
 #### 策略（Strategy）
 - 抽象方法
@@ -47,8 +52,8 @@
   - _draw ()：绘制棋盘
   - move (position): 落子，棋子自动判定
   - moveByStratepy (strategy)：根据某个策略模型落子
-  - start (piece = PIECE_O)：开始游戏
-  - restart (piece = PIECE_O)：重置游戏
+  - start ()：开始游戏
+  - restart ()：重置游戏
 ---
 ### 落子策略
 - Random
