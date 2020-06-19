@@ -27,16 +27,16 @@ class Game {
     range.selectNodeContents(this.containerEl)
     const fragment = range.extractContents()
     Array.from(fragment.childNodes).filter(n => n.tagName === 'DIV')
-    .forEach((el, pos) => {
-      const cell = this.board.cellFor(pos)
-      el.innerText = (cell === EMPTY) ? '' : this.board.displayFor(cell)
-    })
+      .forEach((el, pos) => {
+        const cell = this.board.cellFor(pos)
+        el.innerText = this.board.isEmptyCell(cell) ? '' : this.board.displayFor(cell)
+      })
 
     this.containerEl.appendChild(fragment)
   }
 
   move(position) {
-    if (this.isRunning && this.board.cellFor(position) === EMPTY) {
+    if (this.isRunning && this.board.isEmptyCell(this.board.cellFor(position))) {
       this.board.move(position, this.currentPiece)
       this.currentPiece = this.board.switchPiece(this.currentPiece)
       this._draw()
@@ -54,14 +54,13 @@ class Game {
     this.move(position)
   }
 
-  start(piece = PIECE_O) {
-    this.currentPiece = piece
+  start() {
     this.isRunning = true
     this.board.clear()
     this._draw()
   }
 
-  restart(piece = PIECE_O) {
-    this.start(piece)
+  restart() {
+    this.start()
   }
 }
