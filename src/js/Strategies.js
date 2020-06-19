@@ -20,7 +20,7 @@ class MonteCarloStrategy {
   }
 
   _trial (board, piece) {
-    let winner = null
+    let winner = board.checkWin()
     while (winner === null) {
       const emptyCells = board.getEmptyCells()
       const position = this._randomChoose(emptyCells)
@@ -37,7 +37,7 @@ class MonteCarloStrategy {
     }
 
     board.cells.forEach((cell, pos) => {
-      if (cell !== EMPTY) {
+      if (!board.isEmptyCell(cell)) {
         scores[pos] += (cell === winner) ? 1 : -1
       }
     })
