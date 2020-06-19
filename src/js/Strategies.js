@@ -151,11 +151,11 @@ class MinimaxStrategy {
       return { score: this._winScoreFor(winner), position: -1 }
     }
 
-    const otherPiece = board.switchPiece(piece)
-    let best = { score: this._winScoreFor(otherPiece), position: -1 }
+    const adversary = board.switchPiece(piece)
+    let best = { score: this._winScoreFor(adversary), position: -1 }
     for (const position of board.getEmptyCells()) {
       board.move(position, piece)
-      const { score } = this._getBestMove(board, otherPiece, self)
+      const { score } = this._getBestMove(board, adversary, self)
       board.clearCell(position)
       if (this._isWin(piece, score)) {
         self.winner = this._winFor(this._winScoreFor(score))
