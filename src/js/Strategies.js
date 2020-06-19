@@ -146,6 +146,7 @@ class MinimaxStrategy {
     parent.children.push(self)
     const winner = board.checkWin()
     if (winner !== null) {
+      self.piece = ''
       self.winner = this._winFor(this._winScoreFor(winner))
       return { score: this._winScoreFor(winner), position: -1 }
     }
