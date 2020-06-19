@@ -1,11 +1,23 @@
 class RandomStrategy {
 
+  _log(board, piece, position) {
+    const logs = [
+      'Random',
+      board.display(),
+      `当前落子：${board.displayFor(piece)}`,
+      `选择了(${Math.floor(position / board.dimension)}, ${position % board.dimension})`
+    ]
+    console.log(logs.join('\n'))
+  }
+
   _randomChoose(cells) {
     return cells[Math.floor(Math.random() * cells.length)]
   }
 
   calculatePosition(board, piece) {
-    return this._randomChoose(board.getEmptyCells())
+    const position = this._randomChoose(board.getEmptyCells())
+    this._log(board, piece, position)
+    return position
   }
 
 }
@@ -13,6 +25,17 @@ class RandomStrategy {
 class MonteCarloStrategy {
   constructor(numberOfTrials = 100) {
     this.numberOfTrials = numberOfTrials
+  }
+
+  _log(board, piece, position, scoreBoard) {
+    const logs = [
+      'Monte Carlo',
+      board.display(),
+      scoreBoard.map(s => s.toString().padStart(4)).join(',').replace(new RegExp(`((?:.+?,){${board.dimension}})`, 'g'), '$1\n'),
+      `当前落子：${board.displayFor(piece)}`,
+      `选择了(${Math.floor(position / board.dimension)}, ${position % board.dimension})`
+    ]
+    console.log(logs.join('\n'))
   }
 
   _randomChoose(cells) {
@@ -59,7 +82,9 @@ class MonteCarloStrategy {
       this._updateScores(scoreBoard, trialBoard)
     }
 
-    return this._getBestMove(scoreBoard, board)
+    const position = this._getBestMove(scoreBoard, board)
+    this._log(board, piece, position, scoreBoard)
+    return position
   }
 }
 
@@ -70,10 +95,30 @@ class MinimaxStrategy {
       [PIECE_X]: 1,
       [DRAW]: 0
     }
+
+    this.root = { children: [] }
+  }
+
+  _log(board, piece, position) {
+    const logs = [
+      'Minimax',
+      board.display(),
+      `当前落子：${board.displayFor(piece)}`,
+      `选择了(${Math.floor(position / board.dimension)}, ${position % board.dimension})`
+    ]
+    console.log(logs.join('\n'))
   }
 
   _winScoreFor(winner) {
     return this.WIN_SCORES[winner]
+  }
+
+  _winFor(score) {
+    return {
+      [PIECE_O]: '⭕',
+      [PIECE_X]: '❌',
+      [DRAW]: 'DRWA'
+    }[score]
   }
 
   _isWin(piece, score) {
@@ -90,9 +135,18 @@ class MinimaxStrategy {
     }
   }
 
-  _getBestMove(board, piece) {
+  _getBestMove(board, piece, parent) {
+    const self = {
+      winner: '',
+      piece: board.displayFor(piece),
+      position: '',
+      board: board.display().split('\n'),
+      children: []
+    }
+    parent.children.push(self)
     const winner = board.checkWin()
     if (winner !== null) {
+      self.winner = this._winFor(this._winScoreFor(winner))
       return { score: this._winScoreFor(winner), position: -1 }
     }
 
@@ -100,14 +154,18 @@ class MinimaxStrategy {
     let best = { score: this._winScoreFor(otherPiece), position: -1 }
     for (const position of board.getEmptyCells()) {
       board.move(position, piece)
-      const { score } = this._getBestMove(board, otherPiece)
+      const { score } = this._getBestMove(board, otherPiece, self)
       board.clearCell(position)
       if (this._isWin(piece, score)) {
+        self.winner = this._winFor(this._winScoreFor(score))
+        self.position = `(${Math.floor(position / board.dimension)}, ${position % board.dimension})`
         return { score, position }
       } else if (this._isBetter(piece, score, best.score)) {
         best = { score, position }
       }
     }
+    self.winner = this._winFor(this._winScoreFor(best.score))
+    self.position = `(${Math.floor(best.position / board.dimension)}, ${best.position % board.dimension})`
     return best
   }
 
@@ -115,10 +173,13 @@ class MinimaxStrategy {
     if (board.isEmpty()) {
       return Math.floor(board.cells.length / 2)
     }
-    const { position } = this._getBestMove(board, piece)
+    this.root = { children: [] }
+    const { position } = this._getBestMove(board, piece, this.root)
     if (position === -1) {
       throw Error('returned illegal move position (-1)')
     }
+    console.log(JSON.stringify(this.root.children[0], null, 2))
+    this._log(board, piece, position)
     return position
   }
 }
