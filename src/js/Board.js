@@ -44,19 +44,23 @@ class Board {
     return this.cells[position]
   }
 
+  isEmptyCell(cell) {
+    return cell === EMPTY
+  }
+
   getEmptyCells() {
-    return this.cells.map((cell, idx) => cell === EMPTY ? idx : -1).filter(idx => ~idx)
+    return this.cells.map((cell, idx) => this.isEmptyCell(cell) ? idx : -1).filter(idx => ~idx)
   }
 
   move(position, piece) {
-    if (this.cellFor(position) === EMPTY) {
+    if (this.isEmptyCell(this.cellFor(position))) {
       this.cells[position] = piece
     }
   }
 
   _checkWinByAxis(start, step) {
     const piece = this.cellFor(start)
-    if (piece === EMPTY) {
+    if (this.isEmptyCell(piece)) {
       return null
     }
     let pos = start + step * (this.dimension - 1)
@@ -93,7 +97,7 @@ class Board {
       return winner
     }
 
-    return this.getEmptyCells().length ? null : DRAW
+    return this.isFull() ? DRAW : null
   }
 
   clone() {
@@ -105,6 +109,10 @@ class Board {
   }
 
   isEmpty() {
-    return this.getEmptyCells().length === this.cells.length
+    return this.cells.every(cell => this.isEmptyCell(cell))
+  }
+
+  isFull() {
+    return this.cells.every(cell => !this.isEmptyCell(cell))
   }
 }
