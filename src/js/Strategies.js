@@ -99,9 +99,9 @@ class MinimaxStrategy {
     const otherPiece = board.switchPiece(piece)
     let best = { score: this._winScoreFor(otherPiece), position: -1 }
     for (const position of board.getEmptyCells()) {
-      const child = board.clone()
-      child.move(position, piece)
-      const { score } = this._getBestMove(child, otherPiece)
+      board.move(position, piece)
+      const { score } = this._getBestMove(board, otherPiece)
+      board.clearCell(position)
       if (this._isWin(piece, score)) {
         return { score, position }
       } else if (this._isBetter(piece, score, best.score)) {
