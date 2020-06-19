@@ -27,13 +27,10 @@ class Board {
   }
 
   switchPiece(piece) {
-    if (piece === PIECE_X) {
-      return PIECE_O
-    } else if (piece === PIECE_O) {
-      return PIECE_X
-    } else {
+    if (![PIECE_X, PIECE_O].includes(piece)) {
       throw TypeError('Invalid piece type')
     }
+    return PIECE_X + PIECE_O - piece
   }
 
   getDimension() {
