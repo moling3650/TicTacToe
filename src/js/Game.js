@@ -50,7 +50,7 @@ class Game {
   }
 
   moveByStratepy(stratepy) {
-    if (board.isFull()) {
+    if (this.board.isFull()) {
       throw Error('there is no possible next move')
     }
     const position = stratepy.calculatePosition(this.board, this.currentPiece)
