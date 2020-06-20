@@ -1,24 +1,28 @@
 class Game {
-  constructor(board, containerSelector = '.container') {
+  constructor(board, containerSelector = '.container', opts) {
     this.board = board
     this.containerEl = document.querySelector(containerSelector)
     this.currentPiece = PIECE_O
     this.isRunning = false
-    this._initDom()
+    this._initDom(opts)
   }
 
-  _initDom() {
+  _initDom(opts) {
+    const { cellSize = 100, cellBorderWidth = 1 } = opts || {}
     const fragment = document.createDocumentFragment()
     const dim = this.board.getDimension()
     for (let pos = 0; pos < this.board.cells.length; pos++) {
-      if (pos && pos % dim === 0) {
-        fragment.appendChild(document.createElement('BR'))
-      }
       const el = document.createElement('DIV')
+      el.style.width = `${cellSize}px`
+      el.style.height = `${cellSize}px`
+      el.style.fontSize = `${cellSize * 0.6}px`
+      el.style.lineHeight = `${cellSize}px`
+      el.style.border = `${cellBorderWidth}px solid #fff`
       el.classList.add('cell')
       el.addEventListener('click', () => this.move(pos))
       fragment.appendChild(el)
     }
+    this.containerEl.style.width = `${(cellSize + cellBorderWidth * 2) * dim}px`
     this.containerEl.appendChild(fragment)
   }
 
@@ -26,11 +30,10 @@ class Game {
     const range = new Range()
     range.selectNodeContents(this.containerEl)
     const fragment = range.extractContents()
-    Array.from(fragment.childNodes).filter(n => n.tagName === 'DIV')
-      .forEach((el, pos) => {
-        const cell = this.board.cellFor(pos)
-        el.innerText = this.board.isEmptyCell(cell) ? '' : this.board.displayFor(cell)
-      })
+    Array.from(fragment.childNodes).forEach((el, pos) => {
+      const cell = this.board.cellFor(pos)
+      el.innerText = this.board.isEmptyCell(cell) ? '' : this.board.displayFor(cell)
+    })
 
     this.containerEl.appendChild(fragment)
   }
