@@ -139,7 +139,7 @@ class MinimaxStrategy {
     const self = {
       winner: '',
       piece: board.displayFor(piece),
-      position: '',
+      bestMove: '',
       board: board.display().split('\n'),
       children: []
     }
@@ -159,14 +159,14 @@ class MinimaxStrategy {
       board.clearCell(position)
       if (this._isWin(piece, score)) {
         self.winner = this._winFor(this._winScoreFor(score))
-        self.position = `(${Math.floor(position / board.dimension)}, ${position % board.dimension})`
+        self.bestMove = `(${Math.floor(position / board.dimension)}, ${position % board.dimension})`
         return { score, position }
       } else if (this._isBetter(piece, score, best.score)) {
         best = { score, position }
       }
     }
     self.winner = this._winFor(this._winScoreFor(best.score))
-    self.position = `(${Math.floor(best.position / board.dimension)}, ${best.position % board.dimension})`
+    self.bestMove = `(${Math.floor(best.position / board.dimension)}, ${best.position % board.dimension})`
     return best
   }
 
