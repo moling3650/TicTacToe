@@ -4,7 +4,7 @@ const EMPTY = 0
 const DRAW = 0
 
 class Board {
-  constructor(dimension = 3, cells = null) {
+  constructor(dimension = 3, cells = null, winDimension) {
     if (cells && Array.isArray(cells)) {
       this.cells = cells.flat()
       this.dimension = Math.sqrt(this.cells.length)
@@ -12,6 +12,8 @@ class Board {
       this.dimension = dimension
       this.clear()
     }
+    this.winDimension = winDimension || this.dimension
+    this.checkWinRegExp = new RegExp(`(${this.displayFor(PIECE_X)}|${this.displayFor(PIECE_O)})(?:\\1){${this.winDimension - 1}}`)
   }
 
   displayFor(cell) {
@@ -20,6 +22,13 @@ class Board {
       [PIECE_X]: '❌',
       [PIECE_O]: '⭕',
     }[cell]
+  }
+
+  winnerFor(display) {
+    return {
+      '❌': PIECE_X,
+      '⭕': PIECE_O
+    }[display]
   }
 
   display() {
@@ -55,45 +64,66 @@ class Board {
     }
   }
 
-  _checkWinByAxis(start, step) {
-    const piece = this.cellFor(start)
-    if (this.isEmptyCell(piece)) {
-      return null
+  _getAxisList() {
+    const axisList = []
+    for (let start = 0; start < this.cells.length; start += this.dimension) {
+      const axis = []
+      for (let offset = 0; offset < this.dimension; offset++) {
+        axis.push(start + offset)
+      }
+      axisList.push(axis.map(pos => this.displayFor(this.cellFor(pos))).join(''))
     }
-    let pos = start + step * (this.dimension - 1)
-    while (start < pos && this.cellFor(pos) === piece) {
-      pos -= step
+
+    for (let start = 0; start < this.dimension; start++) {
+      const axis = []
+      for (let offset = 0; offset < this.cells.length; offset += this.dimension) {
+        axis.push(start + offset)
+      }
+      axisList.push(axis.map(pos => this.displayFor(this.cellFor(pos))).join(''))
     }
-    return (start === pos) ? piece : null
+
+    {
+      let start = this.winDimension - 1
+      while (start / this.dimension < this.dimension - this.winDimension + 1) {
+        const axis = [this.cellFor(start)]
+        let offset = 0
+        do {
+          offset += this.dimension - 1
+          axis.push(start + offset)
+        } while ((start + offset * 2) < this.cells.length && (start + offset) % this.dimension)
+        axisList.push(axis.map(pos => this.displayFor(this.cellFor(pos))).join(''))
+        start += start < this.dimension - 1 ? 1 : this.dimension
+      }
+    }
+
+    {
+      let start = this.dimension - this.winDimension
+      while (start / this.dimension <= (this.dimension - this.winDimension)) {
+        const axis = [this.cellFor(start)]
+        let offset = 0
+        do {
+          offset += this.dimension + 1
+          axis.push(start + offset)
+        } while ((start + offset + this.dimension) / this.dimension < this.dimension && (start + offset + 1) % this.dimension)
+        axisList.push(axis.map(pos => this.displayFor(this.cellFor(pos))).join(''))
+        start += start % this.dimension ? -1 : this.dimension
+      }
+    }
+    return axisList
+  }
+
+  _checkWinByAxis(axis) {
+    const match = this.checkWinRegExp.exec(axis)
+    return match && this.winnerFor(match[1])
   }
 
   checkWin() {
-    let winner = null
-    // 横轴
-    for (let pos = 0; pos < this.cells.length; pos += this.dimension) {
-      winner = this._checkWinByAxis(pos, 1)
-      if (winner) {
+    for (const axis of this._getAxisList()) {
+      const winner = this._checkWinByAxis(axis)
+      if (winner !== null) {
         return winner
       }
     }
-    // 纵轴
-    for (let pos = 0; pos < this.dimension; pos++) {
-      winner = this._checkWinByAxis(pos, this.dimension)
-      if (winner) {
-        return winner
-      }
-    }
-    // 左斜轴
-    winner = this._checkWinByAxis(0, this.dimension + 1)
-    if (winner) {
-      return winner
-    }
-    // 右斜轴
-    winner = this._checkWinByAxis(this.dimension - 1, this.dimension - 1)
-    if (winner) {
-      return winner
-    }
-
     return this.isFull() ? DRAW : null
   }
 
